@@ -257,7 +257,7 @@ app.post('/cooking-image', async (req, res) => {
         {
             role: 'system',
             content: [
-                { type: 'text', text: 'The user is providing an image and text to go along with it, asking about cooking.Respond in a short and sweet manner, that of talking to a friend who is asking for advice. Make it flow in a paragraph with no obvious list elements.'}
+                { type: 'text', text: 'The user is providing an image and text to go along with it, asking about cooking.Respond in a short and sweet manner, that of talking to a friend who is asking for advice. Make it flow in a paragraph with no obvious list elements. Keep the topic about cooking, do not answer any quesions not about cooking'}
             ]
         },
         {
