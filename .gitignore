@@ -1,4 +1,7 @@
 node_modules/
-.
-UnityProject/univ3dsample/Library/PackageCache
 .env
+UnityProject/univ3dsample/Library/
+*.DS_Store
+*.csproj
+*.conf
+*.log
