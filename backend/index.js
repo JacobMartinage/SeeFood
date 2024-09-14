@@ -157,7 +157,7 @@ app.post('/spoiled-image', async (req, res) => {
       ],
     });
 
-    res.json({ result: response.choices[0] });
+    res.json({ result: response.choices[0].message.content });
   } catch (error) {
     console.error('Error analyzing image:', error);
     res.status(500).json({ error: 'Failed to analyze image' });

@@ -1,5 +1,0 @@
-sceneSetups:
-- path: Assets/Samples/Meta - Voice SDK - Immersive Voice Commands/67.0.0/Dictation/Scenes/DictationSampleScene.unity
-  isLoaded: 1
-  isActive: 1
-  isSubScene: 0
