@@ -65,6 +65,44 @@ const recipeExample =
     }
 }
 
+const nutritionExaple = {
+    "result": {
+        "ingredients": [
+            {
+                "name": "Tomatoes",
+                "amount": 300,
+                "calories": 66,
+                "fat": 0.4,
+                "protein": 3.3,
+                "carbs": 14.4
+            },
+            {
+                "name": "Bell Peppers",
+                "amount": 150,
+                "calories": 45,
+                "fat": 0.5,
+                "protein": 1.5,
+                "carbs": 10.5
+            },
+            {
+                "name": "Lettuce",
+                "amount": 200,
+                "calories": 30,
+                "fat": 0.3,
+                "protein": 2,
+                "carbs": 6
+            },
+            {
+                "name": "Salad Dressing",
+                "amount": 50,
+                "calories": 125,
+                "fat": 11,
+                "protein": 0,
+                "carbs": 5
+            }
+        ]
+    }}
+
 app.use(bodyParser.json());
 
 const openai = new OpenAI({
@@ -145,7 +183,42 @@ app.post('/ingredient-image', async (req, res) => {
   }
 });
 
-
+app.post('/nutrition', async (req, res) => {
+    try {
+      const { ingredients } = req.body;
+  
+      if (!ingredients) {
+        return res.status(400).json({ error: 'Ingredients is required' });
+      }
+  
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        response_format: {"type" : "json_object"},
+        messages: [
+          {
+              role: 'system',
+              content: [
+                  { type: 'text', text: 'You are a nutirionist. You are given a JSON of ingredients and amounts. Your job is to return a json of the ingredient with the calories, fat, protien and carbs of the item of that amount. Give it your best guess. Dont say anything except the json. Here is an exaple: ' + nutritionExaple}
+              ]
+          },
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(ingredients),
+              },
+            ],
+          },
+        ],
+      });
+  
+      res.json({ result: JSON.parse(response.choices[0].message.content) });
+    } catch (error) {
+      console.error('Error analyzing ingredients:', error);
+      res.status(500).json({ error: 'Failed to analyze ingredients' });
+    }
+  });
 
 
 app.post('/cooking-image', async (req, res) => {
