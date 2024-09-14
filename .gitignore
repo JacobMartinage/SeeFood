@@ -1,3 +1,4 @@
 node_modules/
 .
 UnityProject/univ3dsample/Library/PackageCache
+.env
