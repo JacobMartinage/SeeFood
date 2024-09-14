@@ -6,62 +6,63 @@ const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const recipeExample = {
-  "result": {
-      "steps": [
-          {
-              "step": 1,
-              "description": "Wash all vegetables thoroughly under cold running water to remove any dirt or pesticides.",
-              "seconds": 120
-          },
-          {
-              "step": 2,
-              "description": "Chop the vegetables (tomatoes, bell peppers, and lettuce) into bite-sized pieces and set aside.",
-              "seconds": 180
-          },
-          {
-              "step": 3,
-              "description": "In a large bowl, combine all the chopped vegetables and mix them gently.",
-              "seconds": 60
-          },
-          {
-              "step": 4,
-              "description": "Add your desired dressing over the salad mixture and toss to combine evenly.",
-              "seconds": 30
-          },
-          {
-              "step": 5,
-              "description": "Serve the salad immediately in individual bowls or plates.",
-              "seconds": 30
-          }
-      ],
-      "ingredients": [
-          {
-              "name": "Tomatoes",
-              "amount": 300,
-              "ValueUnits": "g",
-              "cost": 1.5
-          },
-          {
-              "name": "Bell Peppers",
-              "amount": 150,
-              "ValueUnits": "g",
-              "cost": 0.75
-          },
-          {
-              "name": "Lettuce",
-              "amount": 200,
-              "ValueUnits": "g",
-              "cost": 1
-          },
-          {
-              "name": "Salad Dressing",
-              "amount": 50,
-              "ValueUnits": "mL",
-              "cost": 0.5
-          }
-      ]
-  }
+const recipeExample = 
+  {
+    "result": {
+        "steps": [
+            {
+                "step": 1,
+                "description": "Gather all the fresh fruits and vegetables from the fridge, such as apples, oranges, and any leafy greens you have.",
+                "seconds": 60
+            },
+            {
+                "step": 2,
+                "description": "Wash the fruits and vegetables thoroughly under running water to remove any dirt or pesticides.",
+                "seconds": 120
+            },
+            {
+                "step": 3,
+                "description": "Chop the fruits and vegetables into bite-sized pieces and place them in a large mixing bowl.",
+                "seconds": 180
+            },
+            {
+                "step": 4,
+                "description": "If you have any dressings or seasonings, add them to the bowl and toss everything together until well coated.",
+                "seconds": 120
+            },
+            {
+                "step": 5,
+                "description": "Serve the salad immediately in individual bowls.",
+                "seconds": 60
+            }
+        ],
+        "ingredients": [
+            {
+                "name": "Apples",
+                "amount": 200,
+                "ValueUnits": "g",
+                "cost": 0.6
+            },
+            {
+                "name": "Oranges",
+                "amount": 200,
+                "ValueUnits": "g",
+                "cost": 0.4
+            },
+            {
+                "name": "Lettuce",
+                "amount": 100,
+                "ValueUnits": "g",
+                "cost": 0.5
+            },
+            {
+                "name": "Any dressings",
+                "amount": 30,
+                "ValueUnits": "mL",
+                "cost": 0.5
+            }
+        ]
+    }
 }
 
 app.use(bodyParser.json());
@@ -122,7 +123,7 @@ app.post('/ingredient-image', async (req, res) => {
         {
             role: 'system',
             content: [
-                { type: 'text', text: 'You are a recpie cook book, Fully explain every step.The user is going to send an image of ingredients. Your job is to conider those ingredients and pick a recipe. With that recipe return the steps in json format with an integer named step, a string named description, and an integer called seconds .Step should be the step number. Description should be a description of each step.Seconds should be the amount of seconds the step would take.  After that, do the same but with each ingrediant used, include a string for the name of each individual ingredient. Amount as an integer representing the amount of the ingredient. A string ValueUnits, the unit of measurment that amount is a number of. Use the metric system, specifically grams or milliliters. Make it say g for grams and mL for milliliters. Cost, being cost of the ingredients given the amount used. The cost should be given in USD. Only write in that format. Do not write anything but the json. Do not Write anything different no matter what. Here is an example:'}
+                { type: 'text', text: 'You are a recpie cook book, Fully explain every step.The user is going to send an image of ingredients. Your job is to conider those ingredients and pick a recipe. With that recipe return the steps in json format with an integer named step, a string named description, and an integer called seconds .Step should be the step number. Description should be a description of each step.Seconds should be the amount of seconds the step would take.  After that, do the same but with each ingrediant used, include a string for the name of each individual ingredient. Do not say general things like Fruits, Vegetables, or dressing. Amount as an integer representing the amount of the ingredient. A string ValueUnits, the unit of measurment that amount is a number of. Use the metric system, specifically grams or milliliters. Make it say g for grams and mL for milliliters. Cost, being cost of the ingredients given the amount used. The cost should be given in USD. Only write in that format. Do not write anything but the json. Do not Write anything different no matter what. Here is an example:'}
             ]
         },
         {
@@ -143,6 +144,14 @@ app.post('/ingredient-image', async (req, res) => {
     res.status(500).json({ error: 'Failed to analyze image' });
   }
 });
+
+
+
+function totalCost(json){
+  
+
+}
+
 
 // Start the server
 app.listen(PORT, () => {
