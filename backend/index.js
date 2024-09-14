@@ -7,62 +7,153 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const recipeExample = 
-  {
-    "result": {
-        "steps": [
-            {
-                "step": 1,
-                "description": "Gather all the fresh fruits and vegetables from the fridge, such as apples, oranges, and any leafy greens you have.",
-                "seconds": 60
-            },
-            {
-                "step": 2,
-                "description": "Wash the fruits and vegetables thoroughly under running water to remove any dirt or pesticides.",
-                "seconds": 120
-            },
-            {
-                "step": 3,
-                "description": "Chop the fruits and vegetables into bite-sized pieces and place them in a large mixing bowl.",
-                "seconds": 180
-            },
-            {
-                "step": 4,
-                "description": "If you have any dressings or seasonings, add them to the bowl and toss everything together until well coated.",
-                "seconds": 120
-            },
-            {
-                "step": 5,
-                "description": "Serve the salad immediately in individual bowls.",
-                "seconds": 60
-            }
-        ],
-        "ingredients": [
-            {
-                "name": "Apples",
-                "amount": 200,
-                "ValueUnits": "g",
-                "cost": 0.6
-            },
-            {
-                "name": "Oranges",
-                "amount": 200,
-                "ValueUnits": "g",
-                "cost": 0.4
-            },
-            {
-                "name": "Lettuce",
-                "amount": 100,
-                "ValueUnits": "g",
-                "cost": 0.5
-            },
-            {
-                "name": "Any dressings",
-                "amount": 30,
-                "ValueUnits": "mL",
-                "cost": 0.5
-            }
-        ]
-    }
+{
+  "result": {
+      "steps": [
+          {
+              "step": 1,
+              "description": "Gather all ingredients and tools needed for the recipe.",
+              "seconds": 120
+          },
+          {
+              "step": 2,
+              "description": "Wash and prepare the fruits and vegetables. Chop as necessary.",
+              "seconds": 300
+          },
+          {
+              "step": 3,
+              "description": "Preheat the oven to the required temperature if baking is involved.",
+              "seconds": 180
+          },
+          {
+              "step": 4,
+              "description": "Mix the ingredients in a bowl, ensuring they're well combined.",
+              "seconds": 240
+          },
+          {
+              "step": 5,
+              "description": "Transfer the mixture to a baking dish or pan if applicable.",
+              "seconds": 60
+          },
+          {
+              "step": 6,
+              "description": "Place the dish in the oven and bake for the specified time.",
+              "seconds": 1800
+          },
+          {
+              "step": 7,
+              "description": "Remove from the oven and let it cool before serving.",
+              "seconds": 300
+          },
+          {
+              "step": 8,
+              "description": "Serve and enjoy your delicious meal!",
+              "seconds": 60
+          }
+      ],
+      "ingredients": [
+          {
+              "name": "Almond Milk",
+              "amount": 500,
+              "ValueUnits": "mL",
+              "cost": 2,
+              "calories": 30,
+              "protein": 1,
+              "carbs": 5,
+              "fat": 1
+          },
+          {
+              "name": "Eggs",
+              "amount": 200,
+              "ValueUnits": "g",
+              "cost": 3,
+              "calories": 160,
+              "protein": 14,
+              "carbs": 1,
+              "fat": 10
+          },
+          {
+              "name": "Strawberries",
+              "amount": 150,
+              "ValueUnits": "g",
+              "cost": 2.5,
+              "calories": 48,
+              "protein": 1,
+              "carbs": 11,
+              "fat": 0
+          },
+          {
+              "name": "Apples",
+              "amount": 300,
+              "ValueUnits": "g",
+              "cost": 1.5,
+              "calories": 156,
+              "protein": 1,
+              "carbs": 42,
+              "fat": 0
+          },
+          {
+              "name": "Lettuce",
+              "amount": 100,
+              "ValueUnits": "g",
+              "cost": 1,
+              "calories": 15,
+              "protein": 1,
+              "carbs": 3,
+              "fat": 0
+          },
+          {
+              "name": "Carrots",
+              "amount": 200,
+              "ValueUnits": "g",
+              "cost": 1.2,
+              "calories": 82,
+              "protein": 2,
+              "carbs": 19,
+              "fat": 0
+          },
+          {
+              "name": "Cucumbers",
+              "amount": 150,
+              "ValueUnits": "g",
+              "cost": 1.4,
+              "calories": 24,
+              "protein": 1,
+              "carbs": 4,
+              "fat": 0
+          },
+          {
+              "name": "Mayonnaise",
+              "amount": 100,
+              "ValueUnits": "g",
+              "cost": 2,
+              "calories": 700,
+              "protein": 1,
+              "carbs": 1,
+              "fat": 78
+          },
+          {
+              "name": "Salad Greens",
+              "amount": 200,
+              "ValueUnits": "g",
+              "cost": 1.5,
+              "calories": 40,
+              "protein": 3,
+              "carbs": 8,
+              "fat": 1
+          },
+          {
+              "name": "Orange Juice",
+              "amount": 250,
+              "ValueUnits": "mL",
+              "cost": 1,
+              "calories": 112,
+              "protein": 2,
+              "carbs": 26,
+              "fat": 0
+          }
+      ]
+  }
 }
 
 app.use(bodyParser.json());
@@ -123,7 +214,7 @@ app.post('/ingredient-image', async (req, res) => {
         {
             role: 'system',
             content: [
-                { type: 'text', text: 'You are a recpie cook book, Fully explain every step.The user is going to send an image of ingredients. Your job is to conider those ingredients and pick a recipe. With that recipe return the steps in json format with an integer named step, a string named description, and an integer called seconds .Step should be the step number. Description should be a description of each step.Seconds should be the amount of seconds the step would take.  After that, do the same but with each ingrediant used, include a string for the name of each individual ingredient. Do not say general things like Fruits, Vegetables, or dressing. Amount as an integer representing the amount of the ingredient. A string ValueUnits, the unit of measurment that amount is a number of. Use the metric system, specifically grams or milliliters. Make it say g for grams and mL for milliliters. Cost, being cost of the ingredients given the amount used. The cost should be given in USD. Only write in that format. Do not write anything but the json. Do not Write anything different no matter what. Here is an example:'}
+                { type: 'text', text: 'You are a recpie cook book, Fully explain every step.The user is going to send an image of ingredients. Your job is to conider those ingredients and pick a recipe. With that recipe return the steps in json format with an integer named step, a string named description, and an integer called seconds .Step should be the step number. Description should be a description of each step.Seconds should be the amount of seconds the step would take.  After that, do the same but with each ingrediant used, include a string for the name of each individual ingredient. Do not say general things like Fruits, Vegetables, or dressing. Amount as an integer representing the amount of the ingredient. A string ValueUnits, the unit of measurment that amount is a number of. Use the metric system, specifically grams or milliliters. Make it say g for grams and mL for milliliters. Cost, being cost of the ingredients given the amount used. The cost should be given in USD. Calories being  an int representing the amount calories in the serving amount. Protein being an int representing the amount of protein in grams in the servoing amount. Carbs being an int representing the amount of carbs in the serving size in grams. Fat being an int representing the amount of fat in the serving size in grams. Only write in that format. Do not write anything but the json. Do not Write anything different no matter what. Here is an example:'}
             ]
         },
         {
