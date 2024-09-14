@@ -147,13 +147,20 @@ app.post('/ingredient-image', async (req, res) => {
 
 
 
-function totalCost(json){
-  
-
-}
-
-
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+function totalCost(json){
+
+  let sum = 0;
+
+  json.ingredients.forEach(ingredient => {
+    sum += ingredient.cost;
+  });
+  return sum;
+
+}
+module.exports = totalCost; 
+
