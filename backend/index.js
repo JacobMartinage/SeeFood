@@ -148,6 +148,45 @@ app.post('/ingredient-image', async (req, res) => {
 
 
 
+app.post('/cooking-image', async (req, res) => {
+  try {
+    const { imageUrl, text } = req.body;
+
+    if (!imageUrl || !text) {
+      return res.status(400).json({ error: 'Image URL and text are required' });
+    }
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+            role: 'system',
+            content: [
+                { type: 'text', text: 'The user is providing an image and text to go along with it, asking about cooking.Respond in a short and sweet manner, that of talking to a friend who is asking for advice. Make it flow in a paragraph with no obvious list elements'}
+            ]
+        },
+        {
+          role: 'user',
+          content: [
+            { type: 'image_url', image_url: { url: imageUrl } }, // Image part
+            { type: 'text', text: text } // Text part
+          ]
+        }
+      ],
+    });
+
+
+    res.json({ result: response.choices[0] });
+  } catch (error) {
+    console.error('Error analyzing image:', error);
+    res.status(500).json({ error: 'Failed to analyze image' });
+  }
+});
+
+
+
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
