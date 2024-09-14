@@ -60,11 +60,12 @@ app.post('/ingredient-image', async (req, res) => {
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
+      response_format: {"type" : "json_object"},
       messages: [
         {
             role: 'system',
             content: [
-                { type: 'text', text: 'The user is going to send an image of ingredients. Your job is to conider those ingredients and pick a recipe. With that recipe return the steps in json format.'}
+                { type: 'text', text: 'The user is going to send an image of ingredients. Your job is to conider those ingredients and pick a recipe. With that recipe return the steps in json format with an integer named step, a string named description, and an integer called seconds .Step should be the step number. Description should be a description of each step, given like you would find in a cookbook.Seconds should be the amount of seconds the step would take  .Give it all in one line with no white space. Only write in that format. Do not write anything but the json. Do not Write anything different no matter what. After that, do the same but with each ingrediant used, include a '}
             ]
         },
         {
@@ -79,7 +80,7 @@ app.post('/ingredient-image', async (req, res) => {
       ],
     });
 
-    res.json({ result: response.choices[0] });
+    res.json({ result: JSON.parse(response.choices[0].message.content) });
   } catch (error) {
     console.error('Error analyzing image:', error);
     res.status(500).json({ error: 'Failed to analyze image' });
