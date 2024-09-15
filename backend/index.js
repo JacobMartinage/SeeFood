@@ -165,15 +165,18 @@ app.post('/spoiled-image', async (req, res) => {
 });
 
 
+const { doc, setDoc, getDoc } = require("firebase/firestore");
+const { db } = require("./firebase"); // Ensure you have initialized Firestore
 
 app.post('/ingredient-image', async (req, res) => {
-  
   try {
     const { imageUrl } = req.body;
 
     if (!imageUrl) {
       return res.status(400).json({ error: 'Image URL is required' });
     }
+
+    // Get the response from OpenAI API with the recipe information
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -196,18 +199,50 @@ app.post('/ingredient-image', async (req, res) => {
         },
       ],
     });
+    console.log('Raw response:', response.choices[0].message.content);
 
+    const recipeData = JSON.parse(response.choices[0].message.content);
+    const recipeId = "1"; // Using a fixed recipeId, could be anything
 
-    res.json({ result: JSON.parse(response.choices[0].message.content) });
+    // Step 2: Save or replace the existing recipe document with ID "1"
+    const recipeRef = doc(db, "RecipeFood", recipeId); // Reference to the document with ID "1"
+    await setDoc(recipeRef, recipeData); // This will overwrite if it exists or create a new one
+    console.log(`New recipe with ID ${recipeId} saved or replaced.`);
+
+    // Return the new recipe data to the client
+    res.status(200).json({ result: recipeData });
   } catch (error) {
-    console.error('Error analyzing image:', error);
-    res.status(500).json({ error: 'Failed to analyze image' });
+    console.error('Error analyzing image or saving recipe:', error);
+    res.status(500).json({ error: 'Failed to process the recipe' });
   }
 });
 
+async function getRecipeFoodData() {
+  try {
+    // Reference to the document with ID "1" in the "RecipeFood" collection
+    const docRef = doc(db, "RecipeFood", "1");
+
+    // Fetch the document
+    const docSnap = await getDoc(docRef);
+
+    // Check if the document exists
+    if (docSnap.exists()) {
+      // Convert document data to JSON
+      const data = docSnap.data();
+      console.log("Document data:", JSON.stringify(data));
+      return JSON.stringify(data); // Or return JSON.stringify(data) if you need it in JSON format
+    } else {
+      console.log("No such document!");
+    }
+  } catch (error) {
+    console.error("Error fetching document: ", error);
+  }
+}
+
+
 app.post('/nutrition', async (req, res) => {
     try {
-      const { ingredients } = req.body;
+      const  ingredients  = await getRecipeFoodData();
   
       if (!ingredients) {
         return res.status(400).json({ error: 'Ingredients is required' });
@@ -257,7 +292,7 @@ app.post('/cooking-image', async (req, res) => {
         {
             role: 'system',
             content: [
-                { type: 'text', text: 'The user is providing an image and text to go along with it, asking about cooking.Respond in a short and sweet manner, that of talking to a friend who is asking for advice. Make it flow in a paragraph with no obvious list elements. Keep the topic about cooking, do not answer any quesions not about cooking'}
+                { type: 'text', text: 'The user is providing an image and text to go along with it, asking about cooking.Respond in a short and sweet manner, that of talking to a friend who is asking for advice. Make it flow in a paragraph with no obvious list elements. Keep the topic about cooking, do not answer any quesions not about cooking. Here is the recipe he user is trying to follow' + getRecipeFoodData()}
             ]
         },
         {
